@@ -18,12 +18,10 @@ public class UsersController : ControllerBase
     }
 
     [HttpGet]
-    public async Task<ActionResult<
-        IEnumerable<AppUser>>> GetUsers()
+    public async Task<ActionResult<IEnumerable<AppUser>>>
+       GetUsers()
     {
-        var users = await _context.Users
-            .ToListAsync();
-
+        var users = await _context.Users.ToListAsync();
         return Ok(users);
     }
 
