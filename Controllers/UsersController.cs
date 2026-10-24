@@ -2,6 +2,7 @@
 using DatingApp.Data;
 using DatingApp.Entities;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace API.Controllers;
 
@@ -17,15 +18,21 @@ public class UsersController : ControllerBase
     }
 
     [HttpGet]
-    public ActionResult<IEnumerable<AppUser>> GetUsers()
+    public async Task<ActionResult<
+        IEnumerable<AppUser>>> GetUsers()
     {
-        return Ok(_context.Users.ToList());
+        var users = await _context.Users
+            .ToListAsync();
+
+        return Ok(users);
     }
 
     [HttpGet("{id}")]
-    public ActionResult<AppUser> GetUser(int id)
+    public async Task<ActionResult<AppUser>>
+        GetUser(int id)
     {
-        var user = _context.Users.Find(id);
+        var user = await _context.Users
+            .FindAsync(id);
 
         if (user == null)
             return NotFound();
@@ -34,11 +41,12 @@ public class UsersController : ControllerBase
     }
 
     [HttpPost]
-    public ActionResult<AppUser> CreateUser(
-        AppUser user)
+    public async Task<ActionResult<AppUser>>
+        CreateUser(AppUser user)
     {
         _context.Users.Add(user);
-        _context.SaveChanges();
+
+        await _context.SaveChangesAsync();
 
         return CreatedAtAction(
             nameof(GetUser),
